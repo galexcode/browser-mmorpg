@@ -1,3 +1,5 @@
+import pickle
+
 from google.appengine.ext import db
 
 import cardpile
@@ -8,8 +10,7 @@ class Player(db.Model):
   """Implements a user."""
   user = db.UserProperty(required=True, indexed=True)
   games = db.ListProperty(db.Key, required=True, default=[], indexed=False)
-  decks = db.ListProperty(cardpile.CardPile, required=True, default=[],
-                          indexed=False)
+  decks = db.ListProperty(db.Blob, required=True, default=[], indexed=False)
 
   @staticmethod
   def load_or_create_by_user(user):
@@ -24,7 +25,10 @@ class Player(db.Model):
   @staticmethod
   def new(user):
     """Returns a new Player."""
-    return Player(user=user)
+    # Hack to add an initial deck
+    #return Player(user=user)
+    p = Player(user=user)
+    p.set_deck(cardpile.CardPile([0, 1, 2]))
 
   @staticmethod
   def load_by_key(key):
@@ -53,6 +57,34 @@ class Player(db.Model):
     """Add a game for this player."""
     if gamekey not in self.games:
       self.games.append(gamekey)
+
+  def get_deck(self, id):
+    """Get the deck at a given id.
+
+    Args:
+      id: an integer deck id
+
+    Returns:
+      a CardPile instance
+    """
+    return pickle.loads(self.decks[id])
+
+  def set_deck(self, deck, id=None):
+    """Sets the deck at a given id.
+
+    Args:
+      deck: a CardPile instance
+      id: the integer id of the deck to set; defaults to adding a new deck.
+
+    Returns:
+      the id of the deck
+    """
+    if not isinstance(deck, cardpile.CardPile):
+      raise TypeError('deck must be an instance of CardPile.')
+    if id is None:
+      id = len(self.decks)
+    self.decks[id] = db.Blob(pickle.dumps(deck))
+    return id
 
   def itergamekeys(self):
     """Get all current games for this player."""

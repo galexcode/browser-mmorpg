@@ -6,7 +6,7 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: async_mtg.app
+  script: async-mtg.app
 
 libraries:
 - name: jinja2

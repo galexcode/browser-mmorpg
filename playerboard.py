@@ -11,6 +11,7 @@ class PlayerBoard(object):
       deck: a CardPile of the player's deck.
       initial_life: player's starting life as an integer
     """
+    self.deck = deck
     self.library = cardpile.CardPile()
     self.graveyard = cardpile.CardPile()
     self.battlefield = cardpile.CardPile()
