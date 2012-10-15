@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>MtG Game</title>
+  </head>
+  <body>
+
+    <h2>Game: {{ game.key() }}</h2>
+
+    <!-- Join game. -->
+    {% if player.key() in game.iterplayerkeys() %}
+      <div>
+        You are in this game.
+      </div>
+    {% else %}
+      <form name="join_game" action="" method="post">
+        <input type="hidden" value="{{ game.key() }}"/>
+        <input type="submit" value="Join Game"/>
+      </form>
+    {% endif %}
+
+  </body>
+</html>

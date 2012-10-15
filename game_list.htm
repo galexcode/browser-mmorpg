@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>MtG Game List</title>
+  </head>
+  <body style="text-align: center;">
+
+    <h2>Player: {{ player.user }}</h2>
+
+    <!-- Game list. -->
+    <div style="margin-left: auto; margin-right: auto; width: 400px;">
+      {% for game in games %}
+        <p>
+          <a href="/game?game_key={{ game }}">{{ game }}</a>
+        </p>
+      {% endfor %}
+    </div>
+
+    <!-- New game. -->
+    <form name="new_game" action="" method="post">
+      <input type="text" name="new_game"/>
+      <input type="submit" value="New Game"/>
+    </form>
+
+  </body>
+</html>
