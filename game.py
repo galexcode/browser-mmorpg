@@ -9,7 +9,7 @@ import playerboard
 
 STATE_JOIN = 0
 STATE_PLAY = 1
-STATE_COMPLETE = 2
+STATE_DONE = 2
 
 
 class Game(db.Model):
@@ -46,14 +46,22 @@ class Game(db.Model):
     if not player_key in self.players:
       assert len(self.players) == len(self.boards)
       self.players.append(player_key)
-      self.boards.append(
-          playerboard.PlayerBoard(deck, initial_life=initial_life))
+      pboard = playerboard.PlayerBoard(deck, initial_life=initial_life)
+      self.boards.append(db.Blob(pickle.dumps(pboard)))
 
   def iterplayerkeys(self):
     return (p for p in self.players)
 
   def is_active(self):
-    return self.state == STATE_JOIN or self.state == STATE_PLAY
+    return self.state != STATE_DONE
+
+  def set_state(self, state):
+    """Set the game state.
+
+    Args:
+      state: one of STATE_JOIN, STATE_PLAY, or STATE_DONE.
+    """
+    self.state = state
 
   def do(self, action):
     pass
@@ -67,7 +75,8 @@ class Game(db.Model):
     Returns:
       a PlayerBoard instance
     """
-    return pickle.loads(self.boards.index(player_key))
+    assert player_key in self.players
+    return pickle.loads(self.boards[self.players.index(player_key)])
 
   def set_playerboard(self, board, player_key):
     """Sets the board for a given player.
@@ -76,8 +85,9 @@ class Game(db.Model):
       deck: a PlayerBoard instance
       player_key: database key associated with the player
     """
-    if not isinstance(board, playerboard.PlayerBoard):
-      raise TypeError('deck must be an instance of PlayerBoard.')
-    self.boards[self.boards.index(player_key)] = db.Blob(pickle.dumps(board))
+    assert isinstance(board, playerboard.PlayerBoard)
+    assert player_key in self.players
+    assert len(self.players) == len(self.boards)
+    self.boards[self.players.index(player_key)] = db.Blob(pickle.dumps(board))
 
 

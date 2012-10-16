@@ -29,6 +29,7 @@ class Player(db.Model):
     #return Player(user=user)
     p = Player(user=user)
     p.set_deck(cardpile.CardPile([0, 1, 2]))
+    return p
 
   @staticmethod
   def load_by_key(key):
@@ -81,10 +82,13 @@ class Player(db.Model):
     """
     if not isinstance(deck, cardpile.CardPile):
       raise TypeError('deck must be an instance of CardPile.')
-    if id is None:
-      id = len(self.decks)
-    self.decks[id] = db.Blob(pickle.dumps(deck))
-    return id
+    blob = db.Blob(pickle.dumps(deck))
+    if id is not None:
+      self.decks[id] = blob
+      return id
+    else:
+      self.decks.append(blob)
+      return len(self.decks) - 1
 
   def itergamekeys(self):
     """Get all current games for this player."""

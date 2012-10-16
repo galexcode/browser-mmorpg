@@ -1,5 +1,4 @@
 import cardpile
-import mtgexceptions
 
 
 class PlayerBoard(object):
