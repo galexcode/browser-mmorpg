@@ -52,16 +52,39 @@ class Game(db.Model):
   def iterplayerkeys(self):
     return (p for p in self.players)
 
-  def is_active(self):
-    return self.state != STATE_DONE
+  def is_joinable(self):
+    """Return True if the game is still accepting players."""
+    return self.state == STATE_JOIN
 
-  def set_state(self, state):
+  def is_playable(self):
+    """Return True if we are in the playing state."""
+    return self.state == STATE_PLAY
+
+  def has_player(self, player_key):
+    """Returns whether the player is in the game."""
+    return player_key in self.players
+
+  def has_owner(self, player_key):
+    """Returns whether the player is the owner of the game."""
+    return len(self.players) > 0 and player_key == self.players[0]
+
+  def player_count(self):
+    """Returns the number of players in the game."""
+    return len(self.players)
+
+  def _set_state(self, state):
     """Set the game state.
 
     Args:
       state: one of STATE_JOIN, STATE_PLAY, or STATE_DONE.
     """
+    assert state in (STATE_JOIN, STATE_PLAY, STATE_DONE)
     self.state = state
+
+  def start(self):
+    """Start the game."""
+    assert self.player_count() > 1
+    self._set_state(STATE_PLAY)
 
   def do(self, action):
     pass

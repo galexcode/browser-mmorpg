@@ -5,6 +5,9 @@ def image_url(multiverse_id):
   return ('http://gatherer.wizards.com/Handlers/Image.ashx?'
           'multiverseid=%d&type=card' % multiverse_id)
 
+def game_url(game_key):
+  return '/game?game_key=%s' % str(game_key)
+
 def search_url(query_string):
   form_fields = {
       'q': query_string,

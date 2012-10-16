@@ -15,9 +15,14 @@
       {% endfor %}
     </div>
 
+    <!-- Visit game. -->
+    <form name="view_game" action="/game" method="get">
+      <input type="text" name="game_key"/>
+      <input type="submit" value="View Game"/>
+    </form>
     <!-- New game. -->
     <form name="new_game" action="" method="post">
-      <input type="text" name="new_game"/>
+      <input type="hidden" name="action" value="new"/>
       <input type="submit" value="New Game"/>
     </form>
 

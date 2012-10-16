@@ -10,5 +10,6 @@ def game_list(player, games):
   return template.render(player=player, games=games)
 
 def game(player, game):
-  template = jinja_environment.get_template('game.htm')
+  template_file = 'join.htm' if game.is_joinable() else 'game.htm'
+  template = jinja_environment.get_template(template_file)
   return template.render(player=player, game=game)
