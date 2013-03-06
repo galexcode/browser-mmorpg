@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Join Game</title>
+  </head>
+  <body>
+
+    <h2>Game: {{ game.key() }}</h2>
+
+    {% if game.has_player(player.key()) %}
+      <!-- In game. -->
+      <div>
+        You are in this game.
+        {% if game.has_owner(player.key()) and game.player_count() > 1 %}
+          <form name="start_game" action="" method="post">
+            <input type="hidden" name="action" value="start"/>
+            <input type="submit" value="Start Game"/>
+          </form>
+        {% endif %}
+      </div>
+    {% else %}
+      <!-- Join game. -->
+      <form name="join_game" action="" method="post">
+        <input type="hidden" name="action" value="join"/>
+        <!-- TODO(craig): deck list dropdown here -->
+        <input type="submit" value="Join Game"/>
+      </form>
+    {% endif %}
+
+  </body>
+</html>
